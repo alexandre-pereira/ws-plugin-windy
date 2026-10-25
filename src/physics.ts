@@ -84,8 +84,6 @@ export interface Column {
      * horaire, 3 quand le cumul de 3 h d'un pas tri-horaire a été réparti sur ses trois heures
      */
     precipStep: number;
-    /** Pression au sol (hPa) ; null si le modèle ne la fournit pas */
-    pressure: number | null;
     /**
      * Pas de temps du modèle (timestamps) qui encadrent cette heure quand Windy ne fournit l'air en
      * altitude que toutes les 3 heures (voir toHourly) : entre les deux, tout est interpolé. Les
@@ -1869,45 +1867,6 @@ const makeLookup = (sources: (Hash | undefined)[]) => {
     };
 };
 
-/** Air d'un niveau de pression à chaque heure de `data.ts` ; null là où le modèle ne le donne pas */
-export interface LevelAir {
-    ts: number[];
-    /** Température et point de rosée (K) */
-    t: (number | null)[];
-    td: (number | null)[];
-    /** Altitude du niveau (m AMSL) */
-    z: (number | null)[];
-    /** Composantes du vent (m/s) */
-    u: (number | null)[];
-    v: (number | null)[];
-}
-
-/**
- * Air du niveau de pression `level` (hPa), lu tel que Windy le donne : il le fournit aussi sous le
- * relief (valeurs prolongées), ce qui permet de comparer des points d'altitudes différentes.
- */
-export const levelAir = (payload: ForecastPayload, level: number): LevelAir => {
-    const get = makeLookup([payload.sounding, payload.airgram, payload.meteogram]);
-    const ts = (payload.data.ts || []) as number[];
-    const out: LevelAir = { ts, t: [], td: [], z: [], u: [], v: [] };
-    for (const at of ts) {
-        const t = get(`temp-${level}h`, at);
-        const rh = get(`rh-${level}h`, at);
-        const speed = get(`wind-${level}h`, at);
-        const dir = get(`windDir-${level}h`, at);
-        const wind = speed == null || dir == null ? null : windToUV(speed, dir);
-        out.t.push(t);
-        out.td.push(
-            get(`dewPoint-${level}h`, at) ??
-                (t != null && rh != null ? dewPointFromRh(t, rh) : null),
-        );
-        out.z.push(get(`gh-${level}h`, at));
-        out.u.push(wind ? wind.u : null);
-        out.v.push(wind ? wind.v : null);
-    }
-    return out;
-};
-
 const num = (serie: Series | undefined, i: number, fallback = 0): number => {
     const v = serie?.[i];
     return v != null && Number.isFinite(v) ? v : fallback;
@@ -1928,10 +1887,6 @@ export const snowPart = (data: Hash, i: number, t2m: number): number => {
     if (type != null) return 0;
     return t2m <= KELVIN + 0.5 ? total : 0;
 };
-
-/** Pression au sol (hPa) d'une valeur de Windy, donnée en Pa ou en hPa ; null si elle manque */
-const surfacePressure = (v: number | null | undefined): number | null =>
-    v == null || !Number.isFinite(v) || v <= 0 ? null : v > 2000 ? v / 100 : v;
 
 /** Valeur à l'indice i, sinon la plus proche dans ±maxDist pas (séries parfois tri-horaires) ; null sinon */
 const nearestNum = (serie: Series | undefined, i: number, maxDist = 3): number | null => {
@@ -2397,7 +2352,6 @@ export const buildColumns = (
             precip: num(data.precipAmount, i),
             snow: snowPart(data, i, t2m),
             precipStep: Math.max(1, Math.round(num(data.precipStep, i, 1))),
-            pressure: surfacePressure(data.pressure?.[i]),
             step: stepFrom != null && stepTo != null ? [stepFrom, stepTo] : null,
             sunElev,
             cloudCover,

@@ -62,9 +62,7 @@
                         <b
                             >{d.label}{#if d.storm}<span class="wpp__daystorm"
                                     ><StormIcon level={d.storm || 1} size={12} /></span
-                                >{/if}{#each frontKinds.get(d.key) ?? [] as kind}<span class="wpp__dayfront"
-                                    ><FrontIcon {kind} size={18} /></span
-                                >{/each}</b
+                                >{/if}</b
                         >
                         {#if d.outOfRange}
                             <small
@@ -154,7 +152,6 @@
                 <Chart
                     light={lightTheme}
                     columns={dayColumns}
-                    {fronts}
                     {crest}
                     width={chartWidth}
                     {yMin}
@@ -492,7 +489,6 @@
     import Emagram, { emagramRange } from './Emagram.svelte';
     import Legend from './Legend.svelte';
     import ModelPicker from './ModelPicker.svelte';
-    import FrontIcon from './FrontIcon.svelte';
     import { altitudeOfLevel, levelOfAltitude } from './level';
     import StormBanner from './StormBanner.svelte';
     import StormIcon, { STORM_LABELS } from './StormIcon.svelte';
@@ -501,7 +497,6 @@
     import { addFavorite, favoriteAt, loadFavorites, removeFavorite, type Favorite } from './favorites';
     import PlacePicker from './PlacePicker.svelte';
     import { coarsePosition, forgetLastLocation, lastLocation, saveLastLocation } from './position';
-    import { airMassOf, frontDays, frontsOf, mapFronts } from './fronts';
     import { payloadAt } from './interpolate';
     import {
         buildColumns,
@@ -825,8 +820,8 @@
     $: days = buildDays(payload, columns, loc);
 
     /**
-     * Masse d'air des points voisins du lieu, pour lire sur la carte les fronts qui le traversent :
-     * chargée après la prévision du lieu (`for`), qui s'affiche sans l'attendre
+     * Heures des points voisins du lieu, pour voir un orage qui se dirige vers lui : chargées après
+     * la prévision du lieu (`for`), qui s'affiche sans les attendre
      */
     let surroundings: { for: ForecastPayload; fields: Surrounding[] } | null = null;
     const readSurroundings = (center: ForecastPayload, where: LatLon, forModel: ModelId) => {
@@ -834,29 +829,6 @@
             if (payload === center) surroundings = { for: center, fields };
         });
     };
-    /** Voisins nécessaires pour lire la carte : en dessous, les fronts sont repérés sur le lieu seul */
-    const MAP_MIN_POINTS = 3;
-
-    /**
-     * Passages de front de toute la prévision : ceux de la carte autour du lieu, dès que les points
-     * voisins sont chargés (rien avant, plutôt que des fronts qui changeraient)
-     */
-    $: fronts = (() => {
-        if (!loc || !payload || surroundings?.for !== payload) return [];
-        const { fields } = surroundings;
-        const map =
-            fields.length >= MAP_MIN_POINTS
-                ? mapFronts(
-                      airMassOf(payload, loc.lat, loc.lon),
-                      fields.map(f => f.air),
-                      groundModel,
-                  )
-                : null;
-        return frontsOf(columns, loc.lat, map);
-    })();
-    /** Sortes de front qui passent chaque jour : leur symbole suit le nom du jour */
-    $: frontKinds = frontDays(fronts);
-
     /**
      * Lever et coucher du soleil (timestamps) pour la journée locale commençant à `midnight`,
      * au niveau du soleil apparent (−0,833°). null si le soleil ne se lève ou ne se couche pas.
@@ -1866,9 +1838,6 @@
         }
         &__daystorm {
             margin-left: 3px;
-        }
-        &__dayfront {
-            margin-left: 4px;
         }
         &__update {
             display: flex;

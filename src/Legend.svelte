@@ -225,33 +225,6 @@
                     <span>{tr("Heure actuelle", "Current time")}</span>
                 </li>
                 <li>
-                    <svg width="26" height="14"
-                        ><line x1="1" y1="10.5" x2="25" y2="10.5" stroke={FRONT.cold.color} stroke-width="2.2" /><path
-                            d="M3.5 10.5l4.5-7l4.5 7zM14 10.5l4.5-7l4.5 7z"
-                            fill={FRONT.cold.color}
-                        /></svg
-                    >
-                    <span>{tr("Passage d’un front froid, lu sur la carte autour du lieu : vers 1 500 m d’altitude, la masse d’air (température et humidité ensemble) change vite d’un endroit à l’autre, et le vent pousse cet air plus froid sur le lieu, où elle change d’au moins 5 °C en 6 h (ou 7 °C en 12 h pour un front lent). Le trait suit la surface du front : il part du sol à l’heure où l’air commence à changer près du sol (le vent y tourne), passe vers 1 500 m à l’heure où il commence à y changer, et rejoint l’heure où l’air change plus haut, jusqu’à 6 h plus tard. Il s’arrête à 3 000 m au-dessus du sol : plus haut, le front n’est pas repéré. Le front est dit « sec » quand il passe avec moins de 1 mm de pluie. L’infobulle des heures que le trait traverse donne le refroidissement, la rotation du vent, la pluie et les heures du passage au sol et en altitude. Le symbole du front suit aussi le nom du jour où il passe, dans la liste des jours", "Cold front passage, read on the map around the place: at about 1,500 m the air mass (temperature and humidity together) changes quickly from one place to the next, and the wind pushes this colder air over the place, where it changes by at least 5 °C in 6 h (or 7 °C in 12 h for a slow front). The line follows the frontal surface: it starts from the ground at the hour when the air near the ground starts to change (the wind shifts there), passes about 1,500 m at the hour when it starts to change there, and reaches the hour when the air changes higher up, up to 6 h later. It stops 3,000 m above the ground: higher up the front is not tracked. The front is called “dry” when it passes with less than 1 mm of rain. The tooltip of the hours the line crosses gives the cooling, the wind shift, the rain and the hours of the passage at the ground and aloft. The front symbol also follows the name of the day it passes, in the list of days")}</span>
-                </li>
-                <li>
-                    <svg width="26" height="14"
-                        ><line x1="1" y1="10.5" x2="25" y2="10.5" stroke={FRONT.warm.color} stroke-width="2.2" /><path
-                            d="M3.5 10.5a4.5 4.5 0 0 1 9 0zM14 10.5a4.5 4.5 0 0 1 9 0z"
-                            fill={FRONT.warm.color}
-                        /></svg
-                    >
-                    <span>{tr("Passage d’un front chaud : le vent pousse sur le lieu une masse d’air plus chaude, de la même façon. Son trait part du sol à l’heure où l’air finit de changer près du sol et penche vers l’arrière : le front passe en altitude avant d’arriver au sol. La carte est lue en quatre points à 55 km du lieu, chargés après lui : les fronts apparaissent un instant après le graphique. Si ces points ne répondent pas, les fronts sont cherchés sur le lieu seul, et un front peu actif peut manquer. Vitesse : le retard du passage aux points voisins donne la vitesse et la direction du front (infobulle) ; à 50 km/h ou plus, il est dit « rapide ». L’infobulle donne aussi les rafales au sol quand elles montent d’au moins 15 km/h au passage. Quand Windy ne fournit le modèle que toutes les 3 heures, l’heure du passage n’est connue qu’à ce pas près : l’infobulle donne les deux heures (« entre 13h et 16h »)", "Warm front passage: the wind pushes a warmer air mass over the place, in the same way. Its line starts from the ground at the hour when the air near the ground finishes changing and leans backwards: the front passes aloft before reaching the ground. The map is read at four points 55 km from the place, loaded after it: fronts appear a moment after the chart. If these points do not answer, fronts are looked for on the place alone, and a weak front can be missed. Speed: the delay of the passage at the surrounding points gives the speed and direction of the front (tooltip); at 50 km/h or more it is called “fast”. The tooltip also gives the surface gusts when they rise by at least 15 km/h at the passage. When Windy only provides the model every 3 hours, the hour of the passage is only known to within that step: the tooltip gives both hours (“between 13h and 16h”)")}</span>
-                </li>
-                <li>
-                    <svg width="26" height="14"
-                        ><line x1="1" y1="10.5" x2="25" y2="10.5" stroke={FRONT.occluded.color} stroke-width="2.2" /><path
-                            d="M3.5 10.5l4.5-7l4.5 7zM14 10.5a4.5 4.5 0 0 1 9 0z"
-                            fill={FRONT.occluded.color}
-                        /></svg
-                    >
-                    <span>{tr("Occlusion : une langue d’air chaud passe en altitude (l’air y gagne puis reperd au moins 1,5 °C), sous un ciel couvert et une pluie de nuages en couches, sans que l’air change près du sol", "Occluded front: a tongue of warm air passes aloft (the air there gains then loses at least 1.5 °C), under an overcast sky and rain from layered cloud, while the air near the ground does not change")}</span>
-                </li>
-                <li>
                     <svg width="26" height="20"
                         ><circle cx="13" cy="10" r="8.5" fill="none" stroke="#ef4444" stroke-width="1.3" stroke-dasharray="3 2.5" /><g opacity="0.75"><StormIcon level={2} size={12} x={7} y={4} /></g></svg
                     >
@@ -586,7 +559,7 @@
 {/if}
 
 <script lang="ts">
-    import { EASE, FRONT } from './Chart.svelte';
+    import { EASE } from './Chart.svelte';
     import { STABILITY } from './Emagram.svelte';
     import { INSTABILITY_COLORS, thermalColor, windColor } from './physics';
     import { arrowPath, cloudBand, cumulusPath } from './svg';

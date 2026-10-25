@@ -36,15 +36,6 @@ Plugin Windy.com qui affiche, pour un site de vol, un graphique **altitude × he
   possible) et **bandeau d'alerte** les jours d'orage : heure d'arrivée, vitesse de déplacement, rafales.
   Un **orage voisin** (prévu à 55 km et poussé vers le lieu par le vent, quand le modèle n'en prévoit
   pas sur le lieu) a son bandeau, et son icône cerclée de tirets à l'heure où il peut arriver
-- **Passages de front**, dessinés comme sur une coupe météo : trait bleu à triangles (front froid),
-  rouge à demi-cercles (front chaud) ou violet aux deux symboles (occlusion). Les fronts sont lus
-  sur la carte autour du lieu, pas sur le lieu seul. Le trait suit la surface du front : il part du
-  sol à l'heure où le front y passe et rejoint l'heure où il passe plus haut. Le symbole du front
-  suit aussi le nom du jour où il passe, dans la liste des jours. Un front d'au moins 50 km/h
-  est dit **rapide**, un front froid qui passe sans pluie **sec** ; l'infobulle des heures que le
-  trait traverse donne son nom, sa vitesse et sa direction, et les rafales au sol quand elles
-  sautent à son passage. Avec un modèle fourni toutes les 3 heures, elle donne les deux heures
-  entre lesquelles il passe
 - **Nébulosité du modèle** à chaque altitude (voile gris, d'autant plus opaque que le ciel y est
   couvert, halo clair en haut pour les nuages plus hauts que le graphique), **isotherme 0 °C**
   (tirets bleus), relief du modèle
@@ -53,9 +44,7 @@ Plugin Windy.com qui affiche, pour un site de vol, un graphique **altitude × he
   instable). Le bandeau n'est pas affiché quand les deux restent verts à toutes les heures
 - Infobulle au survol : vent, température, vario et nuages à l'altitude pointée, puis plafond
   exploitable, qualité des thermiques, cumulus, vario max, T° au sol (à l'altitude du sol dans le
-  modèle), isotherme 0 °C, pluie ; aux heures que traverse le trait d'un front, le changement de
-  température en altitude, la rotation du vent, la pluie autour du passage, les heures du passage
-  au sol et en altitude et la remontée de la pression
+  modèle), isotherme 0 °C, pluie
 - Onglets par jour, choix du modèle (ECMWF, ICON, GFS, ICON-EU, ICON-D2, AROME FR, UKV), altitude max, vue 24 h
 - **Heure, altitude et modèle synchronisés avec la carte de Windy**, dans les deux sens : déplacer
   l'heure de la carte change le jour et l'heure du plugin (trait orange sur le graphique, curseur de
@@ -136,7 +125,7 @@ graphique le dit et donne les heures que le modèle fournit : les autres sont in
 Sur <https://www.windy.com/plugins>, choisissez « Load plugin directly from URL » et collez :
 
 ```
-https://windy-plugins.com/2727410/windy-plugin-pg-soundings/1.15.1/plugin.min.js
+https://windy-plugins.com/2727410/windy-plugin-pg-soundings/1.16.0/plugin.min.js
 ```
 
 Le plugin signale ensuite lui-même les nouvelles versions. L'historique est dans
@@ -366,83 +355,17 @@ de pression (souvent 7 niveaux seulement pour ECMWF : rien entre 850 et 700 hPa,
   thermiques exploitables : dans un air saturé, sous un ciel couvert, la particule condense encore
   et son « nuage » peut faire plusieurs kilomètres d'épaisseur sans qu'aucun thermique le nourrisse.
   L'émagramme, lui, montre toujours l'ascension de la particule
-- lit les **passages de front sur la carte** autour du lieu : en plus de la prévision du lieu, il
-  charge celle de quatre points voisins, à 55 km au nord, au sud, à l'est et à l'ouest, et y lit la
-  masse d'air à 850 hPa (et à 700 hPa quand le sol dépasse 900 m, ou quand 850 hPa est sous le sol)
-  : sa température potentielle équivalente, qui réunit température et humidité et ne varie pas quand
-  l'air ne fait que monter ou descendre. Un front est une zone où la masse d'air change vite d'un
-  endroit à l'autre et qui traverse le lieu : la température potentielle équivalente du lieu (lissée
-  sur 3 heures) change d'au moins 5 °C en 6 heures, dans un gradient horizontal moyen d'au moins 3,5
-  °C aux 100 km, que le vent du niveau pousse sur le lieu (advection moyenne d'au moins 0,3 °C/h, de
-  même sens). L'humidité seule ne fait pas un front (intrusion d'air sec, subsidence) : la
-  température potentielle doit suivre, d'au moins 2 °C, avec un gradient d'au moins 1,5 °C aux 100
-  km et une advection d'au moins 0,15 °C/h. **Front lent** : au moins 7 °C en 12 heures (dont 2,8 °C
-  de température potentielle), avec des advections moitié moindres, quand aucun front franc de même
-  sens ne passe à moins de 9 heures. Le gradient est celui du plan ajusté aux cinq points ; il faut
-  au moins trois voisins. Un front froid est dit **sec** quand il tombe moins de 1 mm de pluie
-  autour de son passage (de 3 heures avant à 3 heures après le changement). **Sans points voisins**
-  (ils ne répondent pas, ou sortent du domaine d'un modèle local), le front est repéré sur le lieu
-  seul, entre 750 et 2 000 m au-dessus du sol : au moins 5 °C de température potentielle équivalente
-  en 6 heures, dont 1,5 °C de température (ou 7 °C en 12 heures, dont 2,5 °C), avec une advection
-  froide pour un front froid, chaude d'au moins 0,1 °C/h et sous un ciel couvert pour un front chaud
-  ; l'advection se lit alors sur la rotation du vent entre 500 et 3 000 m au-dessus du sol (vent
-  thermique : à droite en montant dans l'hémisphère nord, de l'air chaud arrive). Un front peu
-  actif, ou qui passe à côté, peut échapper au lieu seul. **Occlusion** (toujours repérée sur le
-  lieu) : l'air libre (1 500 à 3 000 m au-dessus du sol) gagne puis reperd au moins 1,5 °C en 6
-  heures de part et d'autre, sous un ciel couvert et au moins 2 mm de pluie de nuages en couches,
-  quand l'air entre 250 et 1 000 m au-dessus du sol change de moins de 2 °C et qu'aucun autre front
-  ne passe à moins de 12 heures. La carte dit qu'un front passe et à quelle heure il passe au niveau
-  lu ; la prévision du lieu dit où il passe plus bas et plus haut. Un front est le bord de l'air
-  chaud, pas le milieu du changement d'air. Un **front froid** est le bord avant de l'air froid : il
-  passe quand l'air commence à changer. Un **front chaud** est le bord arrière de l'air froid qu'il
-  remplace : il passe quand l'air finit de changer. Ce début (ou cette fin) se lit en remontant (ou
-  en descendant) le temps depuis l'heure du changement le plus rapide, tant que la température
-  potentielle équivalente change encore d'au moins 0,5 °C par heure, de 6 heures au plus. Le
-  graphique trace la **surface du front** par trois points. Au **sol**, l'heure où la température
-  potentielle équivalente de l'air bas (250 à 1 000 m au-dessus du sol) change le plus vite, d'au
-  moins 1 °C en 2 heures, est cherchée dans les 3 heures qui précèdent le changement le plus rapide
-  au niveau lu pour un front froid (il passe au sol avant l'altitude), dans les 3 heures qui le
-  suivent pour un front chaud. Le front froid passe au sol à l'heure où ce changement de l'air bas
-  commence, le front chaud à celle où il finit ; à défaut, l'heure de la carte. C'est l'**heure du
-  passage** que donnent la liste des jours et l'infobulle. Quand Windy ne fournit le modèle que
-  toutes les 3 heures, le changement commence ou finit à un pas du modèle et le front passe dans le
-  pas voisin (celui qui suit pour un front froid, celui qui précède pour un front chaud) : le trait
-  est mis au milieu de ce pas, et l'infobulle en donne les deux heures. À l'**altitude du niveau
-  lu**, l'heure de la carte (début du changement pour un front froid, fin pour un front chaud) : le
-  trait y passe, jamais avant le sol pour un front froid ni après lui pour un front chaud, et à 6
-  heures du sol au plus (si ce niveau est à moins de 250 m du sol, son heure est celle du sol). À
-  **2 250 m au-dessus du sol** (le milieu de la couche de l'air libre), l'heure où l'air libre
-  change le plus vite, cherchée après les passages plus bas pour un front froid, avant pour un front
-  chaud, à 6 heures du sol au plus : le trait ne penche jamais à l'envers. Quand le niveau lu est à
-  2 000 m du sol ou plus, c'est lui qui donne ce point. Il se prolonge jusqu'à 3 000 m au-dessus du
-  sol : plus haut, rien ne dit où est le front. La liste des jours porte le symbole de chaque sorte
-  de front qui passe au sol ce jour-là
-- donne la **vitesse d'un front** et la direction d'où il vient, lues sur la carte : la température
-  potentielle équivalente de chaque point voisin est décalée dans le temps (de −6 à +6 heures, par
-  quart d'heure) jusqu'à se superposer à celle du lieu sur la fenêtre du front, élargie de 3 heures
-  de chaque côté. Ce retard, positif du côté vers lequel le front va, donne avec ceux des autres
-  voisins (il en faut trois) sa lenteur en heures par kilomètre, donc sa vitesse. Elle n'est pas
-  donnée sous 8 km/h ni au-delà de 120 km/h, où les retards deviennent trop petits devant le pas
-  d'une heure. Un front est dit **rapide** à partir de 50 km/h. Limite connue : le gradient exigé
-  est une moyenne sur 6 heures, qu'un front rapide et étroit dilue ; il peut alors manquer
-- dit un passage **brutal** quand au moins 60 % du changement de masse d'air de la fenêtre se fait
-  en 2 heures (l'infobulle donne alors la variation de température de ces 2 heures), et signale un
-  **saut de vent** au sol quand les plus fortes rafales des 3 heures qui suivent le passage
-  dépassent d'au moins 15 km/h celles des 3 heures qui précèdent et atteignent 30 km/h
-- donne le passage au sol **entre deux heures** quand Windy ne fournit le modèle que toutes les
-  3 heures (compte sans Premium, échéances lointaines) : entre deux pas, tout est interpolé, et un
-  changement brusque devient une pente douce. La fourchette est le pas du modèle où tombe l'heure
-  du passage
-- signale un **orage voisin** : un des quatre points voisins porte un risque d'orage (orage
-  probable ou orage violent possible) entre 8 h et 22 h, le vent qui déplace l'orage (vent moyen du
-  sol à 6 km, au moins 10 km/h) pointe vers le lieu à 45° près, et le modèle ne prévoit pas d'orage
-  sur le lieu entre l'heure de cet orage et 2 heures après son arrivée. L'heure d'arrivée est la
-  distance divisée par la vitesse dans la direction du lieu
+- signale un **orage voisin** : en plus de la prévision du lieu, il charge celle de quatre points
+  voisins, à 55 km au nord, au sud, à l'est et à l'ouest. Un de ces points porte un risque d'orage
+  (orage probable ou orage violent possible) entre 8 h et 22 h, le vent qui déplace l'orage (vent
+  moyen du sol à 6 km, au moins 10 km/h) pointe vers le lieu à 45° près, et le modèle ne prévoit
+  pas d'orage sur le lieu entre l'heure de cet orage et 2 heures après son arrivée. L'heure
+  d'arrivée est la distance divisée par la vitesse dans la direction du lieu
 
 Ce sont des **ordres de grandeur**, pas des mesures. Ils ne remplacent ni un vrai modèle
 aérologique ni l'observation sur le terrain.
 
 Le code est dans `src/` : `plugin.svelte` (interface, chargement), `Chart.svelte` (graphique),
 `Emagram.svelte`, `physics.ts` (calculs et couleurs), `interpolate.ts` (pas horaire), `time.ts`
-(heure locale), `fronts.ts` (passages de front), `nearby.ts` (orages voisins), `relief.ts` (crêtes
-voisines), `level.ts` (altitude de la carte), `scrub.ts` (lecture au doigt).
+(heure locale), `nearby.ts` (orages voisins), `relief.ts` (crêtes voisines), `level.ts` (altitude
+de la carte), `scrub.ts` (lecture au doigt).

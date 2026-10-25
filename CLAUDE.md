@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # WS Sounding (ex-PG Soundings)
 
 Plugin Windy.com pour le vol libre (`windy-plugin-pg-soundings`) : graphique altitude × heure du
-vent et des thermiques, émagramme redressé, risque d'orage, passages de front. Svelte + TypeScript,
+vent et des thermiques, émagramme redressé, risque d'orage. Svelte + TypeScript,
 compilé par Rollup. Ce que le plugin affiche et la façon dont chaque
 estimation est calculée sont décrits dans [README.md](README.md).
 
@@ -18,7 +18,7 @@ estimation est calculée sont décrits dans [README.md](README.md).
 - `npm run build` : version finale dans `dist/`
 - `npm test` : tests des calculs (vitest), sur deux prévisions ECMWF réelles de `tests/fixtures/`,
   gardées sur l'ordinateur seulement (ignorées par git : contenu de Windy, qui ne se redistribue pas)
-- Un seul fichier ou un seul test : `npx vitest run tests/fronts.test.ts`, ou
+- Un seul fichier ou un seul test : `npx vitest run tests/nearby.test.ts`, ou
   `npx vitest run tests/physics.test.ts -t "isotherme 0 °C"` (nom d'un `describe` ou d'un `it`)
 - Il n'y a pas de commande de lint ni de vérification des types : la compilation (swc) ne vérifie
   pas les types, seuls les tests et l'essai dans Windy disent si un changement tient
@@ -34,19 +34,19 @@ dans son panneau. Les modules `@windy/*` sont fournis par Windy à l'exécution 
 Trajet des données, du lieu choisi à l'écran :
 
 1. `forecast.ts` charge la prévision du lieu auprès de Windy (`loadForecast`), puis celle de quatre
-   points voisins (`loadSurroundings`), qui ne sert qu'aux fronts.
+   points voisins (`loadSurroundings`), qui ne sert qu'aux orages voisins.
 2. `interpolate.ts` la ramène au pas horaire (`toHourly`) ; `payloadAt` en tire un instant isolé
    pour le curseur de l'émagramme (pas de 5 minutes).
 3. `physics.ts` en fait des colonnes (`buildColumns` → `Column[]`, une par heure) : profil
    vertical, thermiques, cumulus, nuages, CAPE / LI, risque d'orage. Tout l'affichage part de ces
    colonnes ; aucun composant ne relit les données de Windy.
 4. `plugin.svelte` découpe les colonnes par jour local (`time.ts`) et les passe à `Chart.svelte`
-   (une journée) ou à `Emagram.svelte` (une heure), avec les fronts (`fronts.ts`), l'orage voisin
-   (`nearby.ts`) et les crêtes (`relief.ts`).
+   (une journée) ou à `Emagram.svelte` (une heure), avec l'orage voisin (`nearby.ts`) et les
+   crêtes (`relief.ts`).
 
 `Chart.svelte` dessine en deux couches superposées : un canvas pour le fond continu (ciel,
 thermiques, voile et nappes de nuages, interpolés d'une heure à l'autre) et un SVG par-dessus pour
-ce qui doit rester net (flèches du vent, tours de cumulus, fronts, bandeaux, infobulle).
+ce qui doit rester net (flèches du vent, tours de cumulus, bandeaux, infobulle).
 
 Le plugin et la carte de Windy restent synchronisés dans les deux sens par le `store` de Windy
 (modèle, heure, niveau) et par le sélecteur de la carte (lieu, sur ordinateur seulement). Windy
@@ -61,12 +61,10 @@ Les réglages de l'utilisateur sont gardés dans le `localStorage` de Windy, sou
 - `src/physics.ts` : des données de Windy aux colonnes altitude/heure, tous les calculs
   aérologiques (thermiques, cumulus, CAPE / LI, orages) et les couleurs
 - `src/forecast.ts`, `src/interpolate.ts`, `src/time.ts` : chargement d'un point et de ses quatre
-  points voisins (pour les fronts), passage au pas horaire, heure locale
+  points voisins (pour les orages voisins), passage au pas horaire, heure locale
 - `src/Chart.svelte`, `src/Emagram.svelte`, `src/Legend.svelte`, `src/StormBanner.svelte`,
-  `src/StormNearby.svelte`, `src/StormIcon.svelte`, `src/FrontIcon.svelte`, `src/ModelPicker.svelte`,
+  `src/StormNearby.svelte`, `src/StormIcon.svelte`, `src/ModelPicker.svelte`,
   `src/PlacePicker.svelte`, `src/svg.ts` : affichage
-- `src/fronts.ts` : passages de front, lus sur la carte autour du lieu (points voisins) sur toute la
-  prévision et dessinés par le graphique
 - `src/nearby.ts` : orage d'un point voisin qui se dirige vers le lieu
 - `src/relief.ts` : altitude des crêtes voisines, lue auprès de Windy autour du lieu choisi
 - `src/level.ts` : altitude de la carte de Windy (niveau le plus proche d'une altitude du graphique,
@@ -117,7 +115,7 @@ Les réglages de l'utilisateur sont gardés dans le `localStorage` de Windy, sou
   (`src/i18n.ts`).
 - Les modules `@windy/*` n'existent que dans Windy. Les calculs testés n'en dépendent pas, ou
   passent par un bouchon de `tests/stubs/` déclaré dans `vitest.config.ts`.
-- Un changement de calcul dans `physics.ts`, `interpolate.ts`, `time.ts`, `fronts.ts`,
+- Un changement de calcul dans `physics.ts`, `interpolate.ts`, `time.ts`,
   `nearby.ts` ou `level.ts` va avec son test dans `tests/`, et avec la mise à jour de « Comment sont calculées les estimations » dans le
   README si une méthode ou un seuil change.
 - Classes CSS préfixées `wpp-`. Prettier : 4 espaces, guillemets simples, 100 colonnes.

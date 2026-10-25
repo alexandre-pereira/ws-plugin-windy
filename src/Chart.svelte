@@ -293,17 +293,6 @@
                     {/if}
                 {/each}
 
-                <!-- Passages de front, comme sur une coupe météo : trait bleu à triangles (front froid) ou
-                     rouge à demi-cercles (front chaud), sous les flèches du vent qui restent lisibles.
-                     Le trait suit la surface du front : il part du sol à l'heure où le front y passe
-                     et rejoint, d'altitude en altitude, l'heure où il passe plus haut. Les symboles sont tournés vers
-                     les heures qui précèdent, celles de l'air que le front remplace -->
-                {#each frontMarks as f}
-                    <path d={f.path} class="wpp-front wpp-front--halo" />
-                    <path d={f.pips} class="wpp-front-pips" fill={f.color} />
-                    <path d={f.path} class="wpp-front" stroke={f.color} />
-                {/each}
-
                 <!-- Vent en altitude -->
                 {#each cols as col, i}
                     {#each col.winds as w}
@@ -638,97 +627,6 @@
                         `Le modèle ne fournit rien au-dessus de ${r50(profileTop(tip.col))} m`,
                         `The model provides nothing above ${r50(profileTop(tip.col))} m`,
                     )}
-                </div>
-            {/if}
-
-            <!-- Front qui passe au sol à cette heure, ou dont le trait la traverse : ce qu'il change -->
-            {#if tipFront}
-                <div class="wpp-tip__group wpp-tip__group--front">
-                    <span><i class="wpp-sw" style="background:{FRONT[tipFront.kind].color}"></i>{frontLabel(tipFront)}</span>
-                </div>
-                <div class="wpp-tip__row">
-                    <span
-                        >{tipFront.kind === 'occluded'
-                            ? tr('Air chaud en altitude', 'Warm air aloft')
-                            : tr(`Air, en ${tipFront.window} h`, `Air, over ${tipFront.window} h`)}</span
-                    >
-                    <b>{tipFront.tempChange > 0 ? '+' : '−'}{Math.abs(tipFront.tempChange).toFixed(1)} °C</b>
-                </div>
-                {#if tipFront.abrupt}
-                    <div class="wpp-tip__row">
-                        <span
-                            title={tr(
-                                'Passage brutal : l’essentiel du changement d’air se fait en 2 heures',
-                                'Abrupt passage: most of the air change happens within 2 hours',
-                            )}>{tr('dont en 2 h', 'of which in 2 h')}</span
-                        >
-                        <b>{tipFront.tempStep > 0 ? '+' : '−'}{Math.abs(tipFront.tempStep).toFixed(1)} °C</b>
-                    </div>
-                {/if}
-                {#if tipFront.speed != null && tipFront.bearing != null}
-                    <div class="wpp-tip__row">
-                        <span
-                            title={tr(
-                                'Vitesse du front, lue sur le retard de son passage aux points voisins du lieu',
-                                'Speed of the front, read from the delay of its passage at the points around the place',
-                            )}>{tr('Déplacement', 'Motion')}</span
-                        >
-                        <b
-                            >~{round5(tipFront.speed)} km/h {tr('de', 'from')}
-                            {cardinal(tipFront.bearing)}</b
-                        >
-                    </div>
-                {/if}
-                {#if tipFront.between}
-                    <div class="wpp-tip__row">
-                        <span
-                            title={tr(
-                                'Windy ne fournit ce modèle que toutes les 3 heures : l’heure du passage n’est connue qu’à ce pas près',
-                                'Windy only provides this model every 3 hours: the hour of the passage is only known to within that step',
-                            )}>{tr('Passage au sol', 'Passage at the ground')}</span
-                        >
-                        <b>{frontWhen(tipFront)}</b>
-                    </div>
-                {:else if tipFront.at.ts !== tip.col.ts}
-                    <div class="wpp-tip__row">
-                        <span>{tr('Passage au sol', 'Passage at the ground')}</span>
-                        <b>{hourText(tipFront.at.hour)}</b>
-                    </div>
-                {/if}
-                {#if tipFront.aloft.ts !== tipFront.at.ts}
-                    <div class="wpp-tip__row">
-                        <span>{tr('Passage en altitude', 'Passage aloft')}</span>
-                        <b>{hourText(tipFront.aloft.hour)}</b>
-                    </div>
-                {/if}
-                {#if tipFront.pressureRise != null}
-                    <div class="wpp-tip__row">
-                        <span>{tr('Pression, 3 h après', 'Pressure, 3 h later')}</span>
-                        <b>{tipFront.pressureRise > 0 ? '+' : '−'}{Math.abs(tipFront.pressureRise).toFixed(1)} hPa</b>
-                    </div>
-                {/if}
-                {#if tipFront.turns && tipFront.before && tipFront.after}
-                    <div class="wpp-tip__row">
-                        <span>{tr(`Vent à ${r50(tipFront.windZ)} m`, `Wind at ${r50(tipFront.windZ)} m`)}</span>
-                        <b>{cardinal(tipFront.before.dir)} → {cardinal(tipFront.after.dir)}</b>
-                    </div>
-                {/if}
-                {#if tipFront.gustJump && tipFront.gustBefore != null && tipFront.gustAfter != null}
-                    <div class="wpp-tip__row">
-                        <span
-                            title={tr(
-                                'Plus fortes rafales au sol des 3 heures qui précèdent le passage, puis des 3 heures qui le suivent',
-                                'Strongest surface gusts in the 3 hours before the passage, then in the 3 hours after it',
-                            )}>{tr('Rafales au sol', 'Surface gusts')}</span
-                        >
-                        <b
-                            >{Math.round(toKmh(tipFront.gustBefore))} → {Math.round(toKmh(tipFront.gustAfter))} km/h</b
-                        >
-                    </div>
-                {/if}
-                <div class="wpp-tip__row">
-                    <span>{tr('Pluie du passage', 'Rain at the passage')}</span>
-                    <b>{tipFront.rain < 1 ? '< 1' : Math.round(tipFront.rain)} mm</b>
                 </div>
             {/if}
 
@@ -1092,25 +990,10 @@
 
 <script context="module" lang="ts">
     import { tr } from './i18n';
-    import { FAST_FRONT, type Front } from './fronts';
     import type { ThermalEase } from './physics';
 
     /** Défilement horizontal du graphique, gardé quand on change de jour, d'onglet ou de lieu */
     let savedScroll: number | null = null;
-
-    /** Fronts, aux couleurs des cartes météo : bleu pour le froid, rouge pour le chaud */
-    export const FRONT: Record<Front['kind'], { color: string; label: string }> = {
-        cold: { color: '#2563eb', label: tr('Front froid', 'Cold front') },
-        warm: { color: '#e11d48', label: tr('Front chaud', 'Warm front') },
-        occluded: { color: '#9333ea', label: tr('Occlusion', 'Occluded front') },
-    };
-    /** Nom d'un front : un front froid qui passe sans pluie est dit sec, un front d'au moins 50 km/h rapide */
-    const frontLabel = (f: Front) => {
-        const name = f.dry ? tr('Front froid sec', 'Dry cold front') : FRONT[f.kind].label;
-        return f.speed != null && f.speed >= FAST_FRONT
-            ? tr(`${name} rapide`, `Fast ${name.toLowerCase()}`)
-            : name;
-    };
 
     /**
      * Qualité des thermiques, donnée par l'infobulle : couleur et libellé, hachures (dans la légende)
@@ -1130,7 +1013,6 @@
 <script lang="ts">
     import { createEventDispatcher, tick } from 'svelte';
 
-    import { FRONT_TOP } from './fronts';
     import { clockText, hourShort, hourText } from './i18n';
     import StormIcon from './StormIcon.svelte';
     import {
@@ -1172,13 +1054,11 @@
         windColor,
     } from './physics';
     import { scrub, type ScrubPoint } from './scrub';
-    import { arrowPath, cloudMassPath, cumulusPath, frontPips, smoothPath } from './svg';
-    import { dayKey, localHour } from './time';
+    import { arrowPath, cloudMassPath, cumulusPath, smoothPath } from './svg';
+    import { dayKey } from './time';
     import type { NearbyStorm } from './nearby';
 
     export let columns: Column[] = [];
-    /** Passages de front de toute la prévision (frontsOf) */
-    export let fronts: Front[] = [];
     /** Altitude (m AMSL) des crêtes voisines ; null en plaine ou tant qu'elle n'est pas connue */
     export let crest: number | null = null;
     export let width = 760;
@@ -1967,66 +1847,6 @@
         .map(s => (s.ts == null ? null : { x: xOfTs(s.ts), label: `${s.icon} ${hhmm(s.ts, utcOffset)}` }))
         .filter((s): s is { x: number; label: string } => !!s && s.x != null);
 
-    // --- Passages de front : ceux dont le trait traverse les heures affichées
-    $: frontMarks = (() => {
-        if (!n) return [];
-        // Symboles entre deux rangées de flèches du vent, là où elles les cachent le moins, sous les
-        // icônes du haut et au-dessus de la ligne du sol
-        const pipZs = range((Math.ceil(yMin / windStep) + 0.5) * windStep, yMax, windStep).filter(
-            z => y(z) > top + 40 && y(z) < y(Math.max(ground, yMin)) - 10,
-        );
-        const xOf = (ts: number) => cx((ts - shown[0].ts) / stepMs);
-        return fronts.flatMap(front => {
-            const { color } = FRONT[front.kind];
-            // Surface du front : l'heure où il passe à chaque altitude connue (sol, niveau lu sur la
-            // carte, milieu de la couche de l'air libre), reliées par des droites. Au-dessus, le
-            // dernier segment se prolonge jusqu'au sommet de cette couche : plus haut, rien ne dit où
-            // elle est
-            const known = front.surface.map(p => ({ z: p.z, x: xOf(p.ts) }));
-            const xAt = (z: number) => {
-                const above = known.findIndex(p => p.z >= z);
-                const k = above < 0 ? known.length - 1 : Math.max(1, above);
-                const [a, b] = [known[k - 1], known[k]];
-                return a.x + ((b.x - a.x) * (z - a.z)) / (b.z - a.z || 1);
-            };
-            const zFoot = Math.max(ground, yMin);
-            const zHead = Math.min(yMax, ground + FRONT_TOP);
-            const point = (z: number) => ({ x: xAt(z), y: y(z) });
-            const bends = known.map(p => p.z).filter(z => z > zFoot && z < zHead);
-            const line = [zFoot, ...bends, zHead].map(point);
-            const x0 = Math.min(...line.map(p => p.x));
-            const x1 = Math.max(...line.map(p => p.x));
-            if (zHead <= zFoot || x1 < left || x0 > left + plotW) return [];
-            // Symboles : chacun tourné selon le segment qui le porte
-            const edges = [zFoot, ...bends, zHead];
-            const pips = pipZs
-                .filter(z => z > zFoot && z < zHead)
-                .map(z => {
-                    const k = Math.max(1, edges.findIndex(e => e >= z));
-                    return frontPips(front.kind, point(edges[k - 1]), point(edges[k]), [point(z)], 6.5);
-                })
-                .join('');
-
-            return {
-                front,
-                color,
-                path: line.map((p, k) => `${k ? 'L' : 'M'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(''),
-                x0,
-                x1,
-                pips,
-            };
-        });
-    })();
-
-    /**
-     * Heure du passage au sol d'un front : « entre 13h et 16h » quand le modèle n'est fourni que
-     * toutes les 3 h, sinon son heure
-     */
-    const frontWhen = (f: Front) => {
-        if (!f.between) return hourText(f.at.hour);
-        const [a, b] = f.between.map(ts => hourShort(localHour(ts, f.at.utcOffset)));
-        return tr(`entre ${a} et ${b}`, `between ${a} and ${b}`);
-    };
     const round5 = (v: number) => Math.round(v / 5) * 5;
 
     /** Colonne de l'heure où l'orage voisin peut arriver, si elle est affichée */
@@ -2071,14 +1891,6 @@
     };
 
     $: tip = hover && shown[hover.i] ? buildTip(shown[hover.i], hover.z, decks[hover.i] ?? null) : null;
-    // Front de l'heure survolée : celui qui y passe au sol, sinon celui dont le trait la traverse
-    $: tipFront =
-        (tip &&
-            hover &&
-            (frontMarks.find(m => m.front.at.ts === tip.col.ts) ??
-                frontMarks.find(m => cx(hover!.i) >= m.x0 - colW / 2 && cx(hover!.i) <= m.x1 + colW / 2)
-            )?.front) ||
-        null;
 
     const buildTip = (col: Column, z: number | null, deck: CloudDeck | null) => {
         const low = deck?.low ?? null;
@@ -2516,24 +2328,6 @@
             stroke-width: 1.5;
             stroke-linecap: round;
         }
-        // Passage de front : trait et symboles cernés de blanc, pour ressortir sur le ciel comme sur
-        // les nuages
-        .wpp-front {
-            fill: none;
-            stroke-width: 2.2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            &--halo {
-                stroke: #ffffff;
-                stroke-width: 4.6;
-                stroke-opacity: 0.85;
-            }
-        }
-        .wpp-front-pips {
-            stroke: #ffffff;
-            stroke-width: 1.2;
-            stroke-linejoin: round;
-        }
         .wpp-freezing-label {
             fill: var(--wpp-freezing);
             font-size: 10px;
@@ -2633,15 +2427,11 @@
                 color: var(--wpp-fg);
                 white-space: nowrap;
             }
-            &--storm span,
-            &--front span {
+            &--storm span {
                 font-size: inherit;
                 font-weight: bold;
                 letter-spacing: 0;
                 text-transform: none;
-            }
-            &--front span {
-                color: var(--wpp-fg);
             }
         }
         .wpp-sw {

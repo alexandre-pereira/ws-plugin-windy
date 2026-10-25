@@ -8,11 +8,19 @@ The git repository only starts after 1.2.7: older entries were reconstructed aft
 release notes. Every version can still be installed from Windy at
 `https://windy-plugins.com/2727410/<plugin-name>/<version>/plugin.min.js`.
 
-## [Unreleased]
+## [1.16.0] - 2026-10-25
 
 ### Changed
 
-- The presentation page (soundings.wesoar.fr) shows the new WeSoar logo, and its tab the new icon.
+- The presentation page (soundings.wesoar.fr) shows the new WeSoar logo, and its tab the new
+  icon. It presents what the plugin shows in the mountains instead of fronts.
+
+### Removed
+
+- Front passages: cold fronts, warm fronts and occluded fronts are no longer drawn on the
+  “Wind & thermals” chart. Their symbol next to the day name and their lines in the tooltip and in
+  the legend go with them. A neighbouring storm pushed towards the place is still shown, as are the
+  rain, clouds and storm risk of every hour.
 
 ## [1.15.1] - 2026-10-19
 

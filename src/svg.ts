@@ -43,35 +43,6 @@ export const arrowPath = (len: number, head = 6, headW = 4, shaftW = 1.1): strin
 };
 
 /**
- * Symboles d'un front posés sur son trait, un en chaque point de `at` : triangles (front froid),
- * demi-cercles (front chaud) ou les deux en alternance (occlusion), de demi-hauteur `r`. Le trait
- * va du point `from` (au sol) au point `to` (en altitude), droit ou penché ; les symboles sont du
- * côté gauche, celui des heures qui précèdent.
- */
-export const frontPips = (
-    kind: 'cold' | 'warm' | 'occluded',
-    from: Pt,
-    to: Pt,
-    at: Pt[],
-    r = 5,
-): string => {
-    const f = (v: number) => v.toFixed(1);
-    const len = Math.hypot(to.x - from.x, to.y - from.y) || 1;
-    // Le long du trait vers le haut, et perpendiculaire vers la gauche
-    const tx = ((to.x - from.x) / len) * r;
-    const ty = ((to.y - from.y) / len) * r;
-    return at
-        .map((p, k) => {
-            const lo = `${f(p.x - tx)},${f(p.y - ty)}`;
-            const hi = `${f(p.x + tx)},${f(p.y + ty)}`;
-            return kind === 'cold' || (kind === 'occluded' && k % 2 === 0)
-                ? `M${hi}L${f(p.x + ty * 1.5)},${f(p.y - tx * 1.5)}L${lo}Z`
-                : `M${hi}A${r},${r} 0 0 0 ${lo}Z`;
-        })
-        .join('');
-};
-
-/**
  * Couche de nuage vue de côté, de `x0` à `x1` : base plate à `yBase`, sommet bourgeonnant dont les
  * bosses, de largeurs et de hauteurs inégales, culminent à `yTop`. `fill` : la couche fermée ;
  * `edge` : son sommet seul, pour en tracer le contour.

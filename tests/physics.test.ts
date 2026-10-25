@@ -1431,17 +1431,6 @@ describe('pluie : limite pluie-neige, virga, pas de temps, pression', () => {
         expect(cols.some(c => c.step![1] > c.step![0])).toBe(true);
     });
 
-    it('pression au sol en hPa, que Windy la donne en Pa ou en hPa ; null sans elle', () => {
-        const withPressure = (value: number) => {
-            const p = structuredClone(doussard) as ForecastPayload;
-            p.data.pressure = p.data.ts!.map(() => value);
-            return columnsOf(p, 45.78, 6.22);
-        };
-        expect(withPressure(101325)[0].pressure).toBeCloseTo(1013.25, 2);
-        expect(withPressure(1013.25)[0].pressure).toBeCloseTo(1013.25, 2);
-        expect(columnsOf(doussard, 45.78, 6.22)[0].pressure).toBeNull();
-    });
-
     it('prévision horaire : la pluie de chaque heure vient d’un pas d’une heure', () => {
         expect(columnsOf(doussard, 45.78, 6.22).every(c => c.precipStep === 1)).toBe(true);
     });

@@ -1,5 +1,5 @@
 /**
- * Orages des points voisins du lieu (ceux où la carte est lue pour les fronts) : un orage que le
+ * Orages des points voisins du lieu (à 55 km au nord, au sud, à l'est et à l'ouest) : un orage que le
  * modèle prévoit à quelques dizaines de kilomètres et que le vent pousse vers le lieu, alors qu'il
  * n'en prévoit pas sur le lieu lui-même. Son front de rafales arrive avant lui.
  */

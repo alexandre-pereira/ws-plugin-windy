@@ -100,14 +100,14 @@ const TEXTS = {
         locale: 'en_GB',
         title: 'WS Sounding: the free-flight forecast inside Windy',
         description:
-            'Free plugin for Windy.com: wind and thermals, altitude by altitude and hour by hour, clouds, fronts, thunderstorm risk and the sounding of the place you pick.',
+            'Free plugin for Windy.com: wind and thermals, altitude by altitude and hour by hour, clouds, thunderstorm risk and the sounding of the place you pick.',
         eyebrow: 'Free plugin for Windy.com',
-        lead: 'The free-flight forecast inside Windy: wind and thermals, altitude by altitude and hour by hour, with clouds, fronts, thunderstorm risk and the sounding of the place you pick.',
+        lead: 'The free-flight forecast inside Windy: wind and thermals, altitude by altitude and hour by hour, with clouds, thunderstorm risk and the sounding of the place you pick.',
         install: v => `Install version ${v}`,
         news: 'What’s new',
         source: 'Source code',
         shotAlt:
-            'Altitude × hour chart of WS Sounding: wind arrows, thermal zone, shower clouds and a cold front passing',
+            'Altitude × hour chart of WS Sounding: wind arrows, thermal zone, shower clouds and cloud ceiling',
         shotCredit:
             'Source: <a href="https://www.windy.com/">Windy.com</a> — ECMWF IFS model data, © ECMWF, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, processed by WS Sounding',
         // Crédit de la capture dans l'aperçu des liens, qui montre l'image sans sa légende
@@ -131,8 +131,8 @@ const TEXTS = {
                 'Risk hour by hour, a warning banner on storm days, a neighbouring storm pushed towards the place, CAPE and LI.',
             ],
             [
-                'Fronts',
-                'Cold fronts, warm fronts and occluded fronts drawn on the chart at the hour they pass.',
+                'Mountains',
+                'Height of the ridges around the place, thermals below the ridges, terrain in cloud, mountain waves.',
             ],
             [
                 'Sounding',
@@ -194,14 +194,14 @@ const TEXTS = {
         locale: 'fr_FR',
         title: 'WS Sounding : la prévision du vol libre dans Windy',
         description:
-            'Plugin gratuit pour Windy.com : le vent et les thermiques, altitude par altitude et heure par heure, les nuages, les fronts, le risque d’orage et l’émagramme du lieu choisi.',
+            'Plugin gratuit pour Windy.com : le vent et les thermiques, altitude par altitude et heure par heure, les nuages, le risque d’orage et l’émagramme du lieu choisi.',
         eyebrow: 'Plugin gratuit pour Windy.com',
-        lead: 'La prévision du vol libre dans Windy : le vent et les thermiques, altitude par altitude et heure par heure, les nuages, les fronts, le risque d’orage et l’émagramme du lieu choisi.',
+        lead: 'La prévision du vol libre dans Windy : le vent et les thermiques, altitude par altitude et heure par heure, les nuages, le risque d’orage et l’émagramme du lieu choisi.',
         install: v => `Installer la version ${v}`,
         news: 'Nouveautés',
         source: 'Code source',
         shotAlt:
-            'Graphique altitude × heure de WS Sounding : flèches du vent, zone des thermiques, nuages d’averses et passage d’un front froid',
+            'Graphique altitude × heure de WS Sounding : flèches du vent, zone des thermiques, nuages d’averses et plafond nuageux',
         shotCredit:
             'Source : <a href="https://www.windy.com/">Windy.com</a> — données du modèle ECMWF IFS, © ECMWF, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr">CC BY 4.0</a>, retraitées par WS Sounding',
         shotSource:
@@ -224,8 +224,8 @@ const TEXTS = {
                 'Risque heure par heure, bandeau d’alerte les jours d’orage, orage voisin poussé vers le lieu, CAPE et LI.',
             ],
             [
-                'Fronts',
-                'Fronts froids, chauds et occlusions tracés sur le graphique à l’heure où ils passent.',
+                'Montagne',
+                'Altitude des crêtes autour du lieu, thermiques sous les crêtes, relief pris dans les nuages, ondes de relief.',
             ],
             [
                 'Émagramme',

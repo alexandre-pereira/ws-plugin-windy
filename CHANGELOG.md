@@ -8,11 +8,19 @@ Le dépôt git ne commence qu'après la 1.2.7 : les entrées plus anciennes ont 
 coup à partir des notes de publication. Chaque version reste installable depuis Windy à l'adresse
 `https://windy-plugins.com/2727410/<nom-du-plugin>/<version>/plugin.min.js`.
 
-## [Non publié]
+## [1.16.0] - 2026-10-25
 
 ### Modifié
 
-- La page de présentation (soundings.wesoar.fr) porte le nouveau logo WeSoar, et son onglet la nouvelle icône.
+- La page de présentation (soundings.wesoar.fr) porte le nouveau logo WeSoar, et son onglet la
+  nouvelle icône. Elle présente ce que le plugin montre en montagne à la place des fronts.
+
+### Supprimé
+
+- Passages de front : les fronts froids, les fronts chauds et les occlusions ne sont plus dessinés
+  sur le graphique « Vent & thermiques ». Leur symbole à côté du nom du jour, leurs lignes dans
+  l'infobulle et dans la légende disparaissent avec eux. L'orage voisin poussé vers le lieu reste
+  signalé, comme la pluie, les nuages et le risque d'orage de chaque heure.
 
 ## [1.15.1] - 2026-10-19
 

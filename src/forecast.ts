@@ -4,7 +4,6 @@
 
 import { getPointForecastData } from '@windy/fetch';
 
-import { type AirMass, airMassOf } from './fronts';
 import { toHourly } from './interpolate';
 import { buildColumns, type Column, type ForecastPayload } from './physics';
 
@@ -47,11 +46,11 @@ export const loadForecast = async (
     return { payload, columns };
 };
 
-/** Distance (km) des points voisins du lieu, au nord, au sud, à l'est et à l'ouest, où la carte est lue */
+/** Distance (km) des points voisins du lieu, au nord, au sud, à l'est et à l'ouest */
 const AROUND_KM = 55;
 const KM_PER_DEG = 111.2;
 
-/** Points voisins du lieu où lire la masse d'air : nord, sud, est, ouest */
+/** Points voisins du lieu, où chercher un orage qui se dirige vers lui : nord, sud, est, ouest */
 export const surroundingPoints = (lat: number, lon: number): { lat: number; lon: number }[] => {
     const dLat = AROUND_KM / KM_PER_DEG;
     const dLon = dLat / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
@@ -63,17 +62,15 @@ export const surroundingPoints = (lat: number, lon: number): { lat: number; lon:
     ];
 };
 
-/** Point voisin du lieu : sa masse d'air (fronts lus sur la carte) et ses heures (orages voisins) */
+/** Point voisin du lieu et ses heures (orages voisins) */
 export interface Surrounding {
     lat: number;
     lon: number;
-    air: AirMass;
     columns: Column[];
 }
 
 /**
- * Points voisins du lieu : leur masse d'air, de quoi lire sur la carte les fronts qui le traversent
- * (voir mapFronts), et leurs heures, de quoi voir un orage qui se dirige vers lui (voir
+ * Points voisins du lieu et leurs heures, de quoi voir un orage qui se dirige vers lui (voir
  * nearbyStormOf). Un voisin qui ne répond pas, ou que Windy sert avec un autre modèle que `served`
  * (bord du domaine d'un modèle local), manque dans la liste.
  */
@@ -88,11 +85,7 @@ export const loadSurroundings = async (
             loadPayload(model, p.lat, p.lon, { header: true, sounding: true })
                 .then(payload =>
                     payload.header.model === served
-                        ? {
-                              ...p,
-                              air: airMassOf(payload, p.lat, p.lon),
-                              columns: columnsOrNone(payload, p.lat, p.lon),
-                          }
+                        ? { ...p, columns: columnsOrNone(payload, p.lat, p.lon) }
                         : null,
                 )
                 .catch(() => null),

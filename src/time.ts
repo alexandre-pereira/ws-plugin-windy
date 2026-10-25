@@ -41,7 +41,7 @@ export const inEuDstZone = (lat: number, lon: number) => {
 /** Heure locale (0-23) de l'instant ts pour un décalage donné (h) */
 export const localHour = (ts: number, offset: number) => new Date(ts + offset * HOUR).getUTCHours();
 
-/** Clé de jour local (même format partout : liste des jours, heure actuelle, fronts) */
+/** Clé de jour local (même format partout : liste des jours, heure actuelle) */
 export const dayKey = (ts: number, offset: number) => {
     const d = new Date(ts + offset * HOUR);
     return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
