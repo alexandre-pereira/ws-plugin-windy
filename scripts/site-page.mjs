@@ -107,7 +107,7 @@ const TEXTS = {
         news: 'What’s new',
         source: 'Source code',
         shotAlt:
-            'Altitude × hour chart of WS Sounding: wind arrows, thermal zone, shower clouds and cloud ceiling',
+            'Altitude × hour chart of WS Sounding: wind arrows by altitude and hour, thermal zone and usable ceiling',
         shotCredit:
             'Source: <a href="https://www.windy.com/">Windy.com</a> — ECMWF IFS model data, © ECMWF, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, processed by WS Sounding',
         // Crédit de la capture dans l'aperçu des liens, qui montre l'image sans sa légende
@@ -201,7 +201,7 @@ const TEXTS = {
         news: 'Nouveautés',
         source: 'Code source',
         shotAlt:
-            'Graphique altitude × heure de WS Sounding : flèches du vent, zone des thermiques, nuages d’averses et plafond nuageux',
+            'Graphique altitude × heure de WS Sounding : flèches du vent par altitude et par heure, zone des thermiques et plafond exploitable',
         shotCredit:
             'Source : <a href="https://www.windy.com/">Windy.com</a> — données du modèle ECMWF IFS, © ECMWF, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr">CC BY 4.0</a>, retraitées par WS Sounding',
         shotSource:
