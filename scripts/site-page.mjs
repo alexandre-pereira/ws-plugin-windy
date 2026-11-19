@@ -45,14 +45,14 @@ const PUBLISHER = {
     name: 'WeSoar',
     form: 'SASU',
     /** Capital social, ex. « 1 000 € » */
-    capital: `[capital ${TODO}]`,
+    capital: '100 €',
     /** Adresse du siège social */
-    address: `[adresse du siège ${TODO}]`,
-    /** Immatriculation, ex. « RCS Annecy 123 456 789 » */
-    registration: `RCS [ville ${TODO}] [SIREN ${TODO}]`,
-    phone: `[téléphone ${TODO}]`,
+    address: '227 chemin de la Chapellière, 74210 Doussard',
+    /** Immatriculation (Kbis du 19/11/2026) */
+    registration: 'RCS Annecy 133 079 350',
+    phone: '+33 6 46 85 42 97',
     /** Numéro de TVA intracommunautaire, s'il existe ; vide, il n'est pas écrit */
-    vat: '',
+    vat: 'FR30133079350',
     email: 'alex@wesoar.fr',
     director: 'Alexandre Pereira',
 };
